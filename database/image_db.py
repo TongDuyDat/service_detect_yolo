@@ -17,12 +17,12 @@ class Images(Document):
     path_image = StringField(required=True)
     bbox = ListField(EmbeddedDocumentField(BBox))
     width = IntField()
-    heigh = IntField()
+    height = IntField()
     meta = {"collection": "Image"}
     # Phương thức thêm image
     @classmethod
-    def add_image(cls, path_image, bbox_list):
-        image = cls(path_image=path_image, bbox=bbox_list)
+    def add_image(cls, path_image, width, height, bbox_list):
+        image = cls(path_image=path_image,width = width, height = height, bbox=bbox_list)
         image.save()
         return image
 

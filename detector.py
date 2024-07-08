@@ -1,13 +1,20 @@
+import os
+from pathlib import Path
+import sys
 import cv2
 from ultralytics import YOLO
-
+FILE = Path(__file__).resolve()
+ROOT = FILE.parents[0]  # YOLOv5 root directory
+if str(ROOT) not in sys.path:
+    sys.path.append(str(ROOT))  # add ROOT to PATH
+ROOT = Path(os.path.relpath(ROOT, Path.cwd()))  # relative
 
 def load_model():
     """Load a model from a file."""
     model = YOLO("weights/yolov8s-oiv7.onnx")
     return model
 
-def detect(frame, model):
+def detect(frame, model, filename):
     result = model(frame)[0]
     bboxes = []
     boxes = result.boxes.xyxy.int().tolist()  # Boxes object for bounding box outputs
@@ -22,4 +29,5 @@ def detect(frame, model):
             "class_name": cls_name
         }
         bboxes.append(result_dict)
+    result.save(filename = filename)
     return bboxes
