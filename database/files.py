@@ -27,7 +27,6 @@ class File(Document):
     @classmethod
     def get_file(cls, file_id):
         file = cls.objects(id=file_id).first()
-        print(file)
         if file:
             return file
         return None
