@@ -52,7 +52,7 @@ def detect_objects():
             #     bboxes.append(bbox_from_dict)
 
             # Images.add_image(path_image=str(save_path), width = w, height = h, bbox_list = bboxes)
-            return jsonify(detection_results)
+            return jsonify(save_path)
         except Exception as e:
             logging.error(f"Error processing image: {e}")
             return f"Error processing image: {e}", 500
