@@ -4,3 +4,4 @@ __pycache__/
 *.pt
 *test*
 *__pycache__*
+.env

@@ -10,6 +10,7 @@ from database.files import File
 from database.image_db import BBox, Images
 from detector import detect, load_model
 from database import *
+from utils import *
 # create app backend
 app = Flask(__name__)
 CORS(app)
@@ -22,26 +23,38 @@ def hello():
     return "Hello World!"
 
 
-@app.route('/detect_objects', methods=['GET'])
+@app.route("/v1/api/detection", methods=["GET"])
 def detect_objects():
-    file_id = request.args['file_id']
+    file_id = request.args.get("file_id")
+    
     if file_id:
         try:
             file = File.get_file(file_id)
             if file == None:
-                return jsonify({"status": "warning", "message": "File id does not exist"}), 400
-
-            file = str(file.name)
-            filename = os.path.basename(file)
-            save_path = Path(os.path.join(os.getenv('save_path'), filename)).as_posix()
-            image = cv2.imread(file)
+                return (
+                    jsonify({"status": "warning", "message": "File id does not exist"}),
+                    400,
+                )
+            folder = str(file.folder)
+            name = str(file.name)
+            filename = f'{folder}/{name}'
+            img_path = Path(os.path.join(os.getenv("save_path"), filename))
+            image = cv2.imread(img_path)
             w, h, _ = image.shape
             # Perform object detection (this is a placeholder, replace with your actual detection code)
+            
+            filename = filename.lower()
+            save_ext = file_extension(filename)
+            save_image = filename.replace(save_ext, f"_detection{save_ext}")
+            save_path = Path(os.path.join(os.getenv("save_path"), save_image)).as_posix()
             detection_results = detect(image, model, save_path)
             status = File.update_file(file_id, save_path)
 
             if status == None:
-                return jsonify({"status": "warning", "message": "File uploaded error"}), 400
+                return (
+                    jsonify({"status": "warning", "message": "File suploaded error"}),
+                    400,
+                )
             # bboxes = []
             # for result_dict in detection_results:
             #     bbox_from_dict = BBox(
@@ -51,7 +64,6 @@ def detect_objects():
             #                 class_name=result_dict["class_name"])
             #     bboxes.append(bbox_from_dict)
 
-            # Images.add_image(path_image=str(save_path), width = w, height = h, bbox_list = bboxes)
             return jsonify({"dectect_path": str(save_path)})
         except Exception as e:
             logging.error(f"Error processing image: {e}")
