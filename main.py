@@ -31,9 +31,9 @@ def detect_objects():
             if file == None:
                 return jsonify({"status": "warning", "message": "File id does not exist"}), 400
 
-            file = str(file.path)
+            file = str(file.name)
             filename = os.path.basename(file)
-            save_path = Path(os.path.join(os.getenv('save_path'), filename))
+            save_path = Path(os.path.join(os.getenv('save_path'), filename)).as_posix()
             image = cv2.imread(file)
             w, h, _ = image.shape
             # Perform object detection (this is a placeholder, replace with your actual detection code)
@@ -41,7 +41,7 @@ def detect_objects():
             status = File.update_file(file_id, save_path)
 
             if status == None:
-                return jsonify({"status": "warning", "message": "File suploaded error"}), 400
+                return jsonify({"status": "warning", "message": "File uploaded error"}), 400
             # bboxes = []
             # for result_dict in detection_results:
             #     bbox_from_dict = BBox(
@@ -52,7 +52,7 @@ def detect_objects():
             #     bboxes.append(bbox_from_dict)
 
             # Images.add_image(path_image=str(save_path), width = w, height = h, bbox_list = bboxes)
-            return jsonify({"dectect_path": save_path})
+            return jsonify({"dectect_path": str(save_path)})
         except Exception as e:
             logging.error(f"Error processing image: {e}")
             return f"Error processing image: {e}", 500
