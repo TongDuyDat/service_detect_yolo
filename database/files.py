@@ -30,3 +30,13 @@ class File(Document):
         if file:
             return file
         return None
+
+    def to_json(self):
+        return {
+            "id": str(self.id),
+            "name": self.name,
+            "folder": self.folder,
+            "path": self.path,
+            "haveCaption": self.haveCaption,
+            "detection_name": self.detection_name,
+        }

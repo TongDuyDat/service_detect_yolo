@@ -64,7 +64,7 @@ def detect_objects():
             #                 class_name=result_dict["class_name"])
             #     bboxes.append(bbox_from_dict)
 
-            return jsonify({"dectect_path": str(save_path)})
+            return jsonify({"data": file.to_json()})
         except Exception as e:
             logging.error(f"Error processing image: {e}")
             return f"Error processing image: {e}", 500
